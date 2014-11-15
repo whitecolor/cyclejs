@@ -10939,18 +10939,49 @@ Rx.Node = {
 module.exports = Rx;
 
 },{"./dist/rx.all":17,"./dist/rx.testing":18,"events":2}],20:[function(require,module,exports){
+function Thunk(fn, args, key, eqArgs) {
+    this.fn = fn;
+    this.args = args;
+    this.key = key;
+    this.eqArgs = eqArgs;
+}
+
+Thunk.prototype.type = 'Thunk';
+Thunk.prototype.render = render;
+module.exports = Thunk;
+
+function shouldUpdate(current, previous) {
+    if (!current || !previous || current.fn !== previous.fn) {
+        return true;
+    }
+
+    var cargs = current.args;
+    var pargs = previous.args;
+
+    return !current.eqArgs(cargs, pargs);
+}
+
+function render(previous) {
+    if (shouldUpdate(this, previous)) {
+        return this.fn.apply(null, this.args);
+    } else {
+        return previous.vnode;
+    }
+}
+
+},{}],21:[function(require,module,exports){
 var diff = require("vtree/diff")
 
 module.exports = diff
 
-},{"vtree/diff":29}],21:[function(require,module,exports){
+},{"vtree/diff":30}],22:[function(require,module,exports){
 module.exports = isObject
 
 function isObject(x) {
     return typeof x === "object" && x !== null
 }
 
-},{}],22:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 var isObject = require("is-object")
 var isHook = require("vtree/is-vhook")
 
@@ -11044,7 +11075,7 @@ function getPrototype(value) {
     }
 }
 
-},{"is-object":21,"vtree/is-vhook":32}],23:[function(require,module,exports){
+},{"is-object":22,"vtree/is-vhook":33}],24:[function(require,module,exports){
 var document = require("global/document")
 
 var applyProperties = require("./apply-properties")
@@ -11092,7 +11123,7 @@ function createElement(vnode, opts) {
     return node
 }
 
-},{"./apply-properties":22,"global/document":25,"vtree/handle-thunk":30,"vtree/is-vnode":33,"vtree/is-vtext":34,"vtree/is-widget":35}],24:[function(require,module,exports){
+},{"./apply-properties":23,"global/document":26,"vtree/handle-thunk":31,"vtree/is-vnode":34,"vtree/is-vtext":35,"vtree/is-widget":36}],25:[function(require,module,exports){
 // Maps a virtual DOM tree onto a real DOM tree in an efficient manner.
 // We don't want to read all of the DOM nodes in the tree so we use
 // the in-order tree indexing to eliminate recursion down certain branches.
@@ -11179,9 +11210,9 @@ function ascending(a, b) {
     return a > b ? 1 : -1
 }
 
-},{}],25:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 module.exports=require(10)
-},{"/Users/amed/Hobby/cycle/node_modules/dom-delegator/node_modules/global/document.js":10,"min-document":1}],26:[function(require,module,exports){
+},{"/Users/amed/Hobby/cycle/node_modules/dom-delegator/node_modules/global/document.js":10,"min-document":1}],27:[function(require,module,exports){
 var applyProperties = require("./apply-properties")
 
 var isWidget = require("vtree/is-widget")
@@ -11351,7 +11382,7 @@ function replaceRoot(oldRoot, newRoot) {
     return newRoot;
 }
 
-},{"./apply-properties":22,"./create-element":23,"./update-widget":28,"vtree/is-widget":35,"vtree/vpatch":37}],27:[function(require,module,exports){
+},{"./apply-properties":23,"./create-element":24,"./update-widget":29,"vtree/is-widget":36,"vtree/vpatch":38}],28:[function(require,module,exports){
 var document = require("global/document")
 var isArray = require("x-is-array")
 
@@ -11429,7 +11460,7 @@ function patchIndices(patches) {
     return indices
 }
 
-},{"./dom-index":24,"./patch-op":26,"global/document":25,"x-is-array":38}],28:[function(require,module,exports){
+},{"./dom-index":25,"./patch-op":27,"global/document":26,"x-is-array":39}],29:[function(require,module,exports){
 var isWidget = require("vtree/is-widget")
 
 module.exports = updateWidget
@@ -11446,7 +11477,7 @@ function updateWidget(a, b) {
     return false
 }
 
-},{"vtree/is-widget":35}],29:[function(require,module,exports){
+},{"vtree/is-widget":36}],30:[function(require,module,exports){
 var isArray = require("x-is-array")
 var isObject = require("is-object")
 
@@ -11788,7 +11819,7 @@ function appendPatch(apply, patch) {
     }
 }
 
-},{"./handle-thunk":30,"./is-thunk":31,"./is-vnode":33,"./is-vtext":34,"./is-widget":35,"./vpatch":37,"is-object":21,"x-is-array":38}],30:[function(require,module,exports){
+},{"./handle-thunk":31,"./is-thunk":32,"./is-vnode":34,"./is-vtext":35,"./is-widget":36,"./vpatch":38,"is-object":22,"x-is-array":39}],31:[function(require,module,exports){
 var isVNode = require("./is-vnode")
 var isVText = require("./is-vtext")
 var isWidget = require("./is-widget")
@@ -11830,14 +11861,14 @@ function renderThunk(thunk, previous) {
     return renderedThunk
 }
 
-},{"./is-thunk":31,"./is-vnode":33,"./is-vtext":34,"./is-widget":35}],31:[function(require,module,exports){
+},{"./is-thunk":32,"./is-vnode":34,"./is-vtext":35,"./is-widget":36}],32:[function(require,module,exports){
 module.exports = isThunk
 
 function isThunk(t) {
     return t && t.type === "Thunk"
 }
 
-},{}],32:[function(require,module,exports){
+},{}],33:[function(require,module,exports){
 module.exports = isHook
 
 function isHook(hook) {
@@ -11845,7 +11876,7 @@ function isHook(hook) {
         !hook.hasOwnProperty("hook")
 }
 
-},{}],33:[function(require,module,exports){
+},{}],34:[function(require,module,exports){
 var version = require("./version")
 
 module.exports = isVirtualNode
@@ -11854,7 +11885,7 @@ function isVirtualNode(x) {
     return x && x.type === "VirtualNode" && x.version === version
 }
 
-},{"./version":36}],34:[function(require,module,exports){
+},{"./version":37}],35:[function(require,module,exports){
 var version = require("./version")
 
 module.exports = isVirtualText
@@ -11863,17 +11894,17 @@ function isVirtualText(x) {
     return x && x.type === "VirtualText" && x.version === version
 }
 
-},{"./version":36}],35:[function(require,module,exports){
+},{"./version":37}],36:[function(require,module,exports){
 module.exports = isWidget
 
 function isWidget(w) {
     return w && w.type === "Widget"
 }
 
-},{}],36:[function(require,module,exports){
+},{}],37:[function(require,module,exports){
 module.exports = "1"
 
-},{}],37:[function(require,module,exports){
+},{}],38:[function(require,module,exports){
 var version = require("./version")
 
 VirtualPatch.NONE = 0
@@ -11897,7 +11928,7 @@ function VirtualPatch(type, vNode, patch) {
 VirtualPatch.prototype.version = version
 VirtualPatch.prototype.type = "VirtualPatch"
 
-},{"./version":36}],38:[function(require,module,exports){
+},{"./version":37}],39:[function(require,module,exports){
 var nativeIsArray = Array.isArray
 var toString = Object.prototype.toString
 
@@ -11907,12 +11938,12 @@ function isArray(obj) {
     return toString.call(obj) === "[object Array]"
 }
 
-},{}],39:[function(require,module,exports){
+},{}],40:[function(require,module,exports){
 var patch = require("vdom/patch")
 
 module.exports = patch
 
-},{"vdom/patch":27}],40:[function(require,module,exports){
+},{"vdom/patch":28}],41:[function(require,module,exports){
 var DataSet = require("data-set")
 
 module.exports = DataSetHook;
@@ -11932,7 +11963,7 @@ DataSetHook.prototype.hook = function (node, propertyName) {
     ds[propName] = this.value;
 };
 
-},{"data-set":45}],41:[function(require,module,exports){
+},{"data-set":46}],42:[function(require,module,exports){
 var DataSet = require("data-set")
 
 module.exports = DataSetHook;
@@ -11952,7 +11983,7 @@ DataSetHook.prototype.hook = function (node, propertyName) {
     ds[propName] = this.value;
 };
 
-},{"data-set":45}],42:[function(require,module,exports){
+},{"data-set":46}],43:[function(require,module,exports){
 module.exports = SoftSetHook;
 
 function SoftSetHook(value) {
@@ -11969,7 +12000,7 @@ SoftSetHook.prototype.hook = function (node, propertyName) {
     }
 };
 
-},{}],43:[function(require,module,exports){
+},{}],44:[function(require,module,exports){
 var VNode = require("vtree/vnode.js")
 var VText = require("vtree/vtext.js")
 var isVNode = require("vtree/is-vnode")
@@ -12097,17 +12128,17 @@ function isChildren(x) {
     return typeof x === "string" || Array.isArray(x) || isChild(x)
 }
 
-},{"./hooks/data-set-hook.js":40,"./hooks/ev-hook.js":41,"./hooks/soft-set-hook.js":42,"./parse-tag.js":61,"error/typed":52,"vtree/is-thunk":53,"vtree/is-vhook":54,"vtree/is-vnode":55,"vtree/is-vtext":56,"vtree/is-widget":57,"vtree/vnode.js":59,"vtree/vtext.js":60}],44:[function(require,module,exports){
+},{"./hooks/data-set-hook.js":41,"./hooks/ev-hook.js":42,"./hooks/soft-set-hook.js":43,"./parse-tag.js":62,"error/typed":53,"vtree/is-thunk":54,"vtree/is-vhook":55,"vtree/is-vnode":56,"vtree/is-vtext":57,"vtree/is-widget":58,"vtree/vnode.js":60,"vtree/vtext.js":61}],45:[function(require,module,exports){
 module.exports=require(8)
-},{"/Users/amed/Hobby/cycle/node_modules/dom-delegator/node_modules/data-set/create-hash.js":8}],45:[function(require,module,exports){
+},{"/Users/amed/Hobby/cycle/node_modules/dom-delegator/node_modules/data-set/create-hash.js":8}],46:[function(require,module,exports){
 module.exports=require(9)
-},{"./create-hash.js":44,"/Users/amed/Hobby/cycle/node_modules/dom-delegator/node_modules/data-set/index.js":9,"individual":46,"weakmap-shim/create-store":47}],46:[function(require,module,exports){
+},{"./create-hash.js":45,"/Users/amed/Hobby/cycle/node_modules/dom-delegator/node_modules/data-set/index.js":9,"individual":47,"weakmap-shim/create-store":48}],47:[function(require,module,exports){
 module.exports=require(11)
-},{"/Users/amed/Hobby/cycle/node_modules/dom-delegator/node_modules/individual/index.js":11}],47:[function(require,module,exports){
+},{"/Users/amed/Hobby/cycle/node_modules/dom-delegator/node_modules/individual/index.js":11}],48:[function(require,module,exports){
 module.exports=require(13)
-},{"./hidden-store.js":48,"/Users/amed/Hobby/cycle/node_modules/dom-delegator/node_modules/weakmap-shim/create-store.js":13}],48:[function(require,module,exports){
+},{"./hidden-store.js":49,"/Users/amed/Hobby/cycle/node_modules/dom-delegator/node_modules/weakmap-shim/create-store.js":13}],49:[function(require,module,exports){
 module.exports=require(14)
-},{"/Users/amed/Hobby/cycle/node_modules/dom-delegator/node_modules/weakmap-shim/hidden-store.js":14}],49:[function(require,module,exports){
+},{"/Users/amed/Hobby/cycle/node_modules/dom-delegator/node_modules/weakmap-shim/hidden-store.js":14}],50:[function(require,module,exports){
 module.exports = function(obj) {
     if (typeof obj === 'string') return camelCase(obj);
     return walk(obj);
@@ -12168,7 +12199,7 @@ function reduce (xs, f, acc) {
     return acc;
 }
 
-},{}],50:[function(require,module,exports){
+},{}],51:[function(require,module,exports){
 var nargs = /\{([0-9a-zA-Z]+)\}/g
 var slice = Array.prototype.slice
 
@@ -12204,7 +12235,7 @@ function template(string) {
     })
 }
 
-},{}],51:[function(require,module,exports){
+},{}],52:[function(require,module,exports){
 module.exports = extend
 
 function extend(target) {
@@ -12221,7 +12252,7 @@ function extend(target) {
     return target
 }
 
-},{}],52:[function(require,module,exports){
+},{}],53:[function(require,module,exports){
 var camelize = require("camelize")
 var template = require("string-template")
 var extend = require("xtend/mutable")
@@ -12271,19 +12302,19 @@ function TypedError(args) {
 }
 
 
-},{"camelize":49,"string-template":50,"xtend/mutable":51}],53:[function(require,module,exports){
-module.exports=require(31)
-},{"/Users/amed/Hobby/cycle/node_modules/virtual-dom/node_modules/vtree/is-thunk.js":31}],54:[function(require,module,exports){
+},{"camelize":50,"string-template":51,"xtend/mutable":52}],54:[function(require,module,exports){
 module.exports=require(32)
-},{"/Users/amed/Hobby/cycle/node_modules/virtual-dom/node_modules/vtree/is-vhook.js":32}],55:[function(require,module,exports){
+},{"/Users/amed/Hobby/cycle/node_modules/virtual-dom/node_modules/vtree/is-thunk.js":32}],55:[function(require,module,exports){
 module.exports=require(33)
-},{"./version":58,"/Users/amed/Hobby/cycle/node_modules/virtual-dom/node_modules/vtree/is-vnode.js":33}],56:[function(require,module,exports){
+},{"/Users/amed/Hobby/cycle/node_modules/virtual-dom/node_modules/vtree/is-vhook.js":33}],56:[function(require,module,exports){
 module.exports=require(34)
-},{"./version":58,"/Users/amed/Hobby/cycle/node_modules/virtual-dom/node_modules/vtree/is-vtext.js":34}],57:[function(require,module,exports){
+},{"./version":59,"/Users/amed/Hobby/cycle/node_modules/virtual-dom/node_modules/vtree/is-vnode.js":34}],57:[function(require,module,exports){
 module.exports=require(35)
-},{"/Users/amed/Hobby/cycle/node_modules/virtual-dom/node_modules/vtree/is-widget.js":35}],58:[function(require,module,exports){
+},{"./version":59,"/Users/amed/Hobby/cycle/node_modules/virtual-dom/node_modules/vtree/is-vtext.js":35}],58:[function(require,module,exports){
 module.exports=require(36)
-},{"/Users/amed/Hobby/cycle/node_modules/virtual-dom/node_modules/vtree/version.js":36}],59:[function(require,module,exports){
+},{"/Users/amed/Hobby/cycle/node_modules/virtual-dom/node_modules/vtree/is-widget.js":36}],59:[function(require,module,exports){
+module.exports=require(37)
+},{"/Users/amed/Hobby/cycle/node_modules/virtual-dom/node_modules/vtree/version.js":37}],60:[function(require,module,exports){
 var version = require("./version")
 var isVNode = require("./is-vnode")
 var isWidget = require("./is-widget")
@@ -12348,7 +12379,7 @@ function VirtualNode(tagName, properties, children, key, namespace) {
 VirtualNode.prototype.version = version
 VirtualNode.prototype.type = "VirtualNode"
 
-},{"./is-vhook":54,"./is-vnode":55,"./is-widget":57,"./version":58}],60:[function(require,module,exports){
+},{"./is-vhook":55,"./is-vnode":56,"./is-widget":58,"./version":59}],61:[function(require,module,exports){
 var version = require("./version")
 
 module.exports = VirtualText
@@ -12360,7 +12391,7 @@ function VirtualText(text) {
 VirtualText.prototype.version = version
 VirtualText.prototype.type = "VirtualText"
 
-},{"./version":58}],61:[function(require,module,exports){
+},{"./version":59}],62:[function(require,module,exports){
 var classIdSplit = /([\.#]?[a-zA-Z0-9_:-]+)/
 var notClassId = /^\.|#/
 
@@ -12411,7 +12442,7 @@ function parseTag(tag, props) {
     return tagName ? tagName.toLowerCase() : "div"
 }
 
-},{}],62:[function(require,module,exports){
+},{}],63:[function(require,module,exports){
 'use strict';
 var Rx = require('rx');
 var errors = require('./errors');
@@ -12514,12 +12545,13 @@ function BackwardFunction() { //inputInterface, definitionFn) {
 
 module.exports = BackwardFunction;
 
-},{"./errors":67,"rx":19}],63:[function(require,module,exports){
+},{"./errors":68,"rx":19}],64:[function(require,module,exports){
 'use strict';
 var h = require('virtual-hyperscript');
 var BackwardFunction = require('./backward-function');
 var Rendering = require('./rendering');
 var Rx = require('rx');
+var Thunk = require('vdom-thunk/immutable-thunk');
 
 function PropertyHook(fn) {
   this.fn = fn;
@@ -12553,12 +12585,13 @@ var Cycle = {
   // Submodules
   Rx: Rx,
   h: h,
+  Thunk: Thunk,
   _delegator: Rendering.delegator
 };
 
 module.exports = Cycle;
 
-},{"./backward-function":62,"./define-intent":64,"./define-model":65,"./define-view":66,"./rendering":69,"rx":19,"virtual-hyperscript":43}],64:[function(require,module,exports){
+},{"./backward-function":63,"./define-intent":65,"./define-model":66,"./define-view":67,"./rendering":70,"rx":19,"vdom-thunk/immutable-thunk":20,"virtual-hyperscript":44}],65:[function(require,module,exports){
 'use strict';
 var BackwardFunction = require('./backward-function');
 var errors = require('./errors');
@@ -12576,7 +12609,7 @@ function defineIntent() {
 
 module.exports = defineIntent;
 
-},{"./backward-function":62,"./errors":67}],65:[function(require,module,exports){
+},{"./backward-function":63,"./errors":68}],66:[function(require,module,exports){
 'use strict';
 var BackwardFunction = require('./backward-function');
 var errors = require('./errors');
@@ -12594,7 +12627,7 @@ function defineModel() {
 
 module.exports = defineModel;
 
-},{"./backward-function":62,"./errors":67}],66:[function(require,module,exports){
+},{"./backward-function":63,"./errors":68}],67:[function(require,module,exports){
 'use strict';
 var Rx = require('rx');
 var BackwardFunction = require('./backward-function');
@@ -12608,8 +12641,9 @@ function getFunctionForwardIntoStream(stream) {
 
 // traverse the vtree, replacing the value of 'ev-*' fields with
 // `function (ev) { view[$PREVIOUS_VALUE].onNext(ev); }`
-function replaceStreamNameWithForwardFunction(vtree, view) {
-  if (typeof vtree.hooks !== 'undefined') {
+function replaceStreamNameWithForwardFunction(node, view) {
+  if (node && node.type === 'VirtualNode' && typeof node.hooks !== 'undefined') {
+    var vtree = node;
     for (var key in vtree.hooks) {
       if (vtree.hooks.hasOwnProperty(key)) {
         var streamName = vtree.hooks[key].value;
@@ -12621,9 +12655,18 @@ function replaceStreamNameWithForwardFunction(vtree, view) {
       }
     }
   }
-  if (Array.isArray(vtree.children)) {
-    for (var i = 0; i < vtree.children.length; i++) {
-      replaceStreamNameWithForwardFunction(vtree.children[i], view);
+  if (node && node.type === 'Thunk') {
+    var thunk = node;
+    var originalFn = thunk.fn;
+    thunk.fn = function () {
+      var vtree = originalFn.apply(null, arguments);
+      replaceStreamNameWithForwardFunction(vtree, view);
+      return vtree;
+    };
+  }
+  if (node && Array.isArray(node.children)) {
+    for (var i = 0; i < node.children.length; i++) {
+      replaceStreamNameWithForwardFunction(node.children[i], view);
     }
   }
 }
@@ -12652,7 +12695,7 @@ function defineView() {
 
 module.exports = defineView;
 
-},{"./backward-function":62,"./errors":67,"rx":19}],67:[function(require,module,exports){
+},{"./backward-function":63,"./errors":68,"rx":19}],68:[function(require,module,exports){
 'use strict';
 
 function CycleInterfaceError(message, missingMember) {
@@ -12683,14 +12726,14 @@ module.exports = {
   customInterfaceErrorMessageInInject: customInterfaceErrorMessageInInject
 };
 
-},{}],68:[function(require,module,exports){
+},{}],69:[function(require,module,exports){
 (function (global){
 'use strict';
 var Cycle = require('./cycle');
 global.Cycle = Cycle;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./cycle":63}],69:[function(require,module,exports){
+},{"./cycle":64}],70:[function(require,module,exports){
 'use strict';
 
 var h = require('virtual-hyperscript');
@@ -12744,4 +12787,4 @@ module.exports = {
   delegator: delegator
 };
 
-},{"dom-delegator":6,"virtual-dom/diff":20,"virtual-dom/patch":39,"virtual-hyperscript":43}]},{},[68]);
+},{"dom-delegator":6,"virtual-dom/diff":21,"virtual-dom/patch":40,"virtual-hyperscript":44}]},{},[69]);

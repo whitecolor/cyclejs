@@ -3,6 +3,7 @@ var h = require('virtual-hyperscript');
 var BackwardFunction = require('./backward-function');
 var Rendering = require('./rendering');
 var Rx = require('rx');
+var Thunk = require('vdom-thunk/immutable-thunk');
 
 function PropertyHook(fn) {
   this.fn = fn;
@@ -36,6 +37,7 @@ var Cycle = {
   // Submodules
   Rx: Rx,
   h: h,
+  Thunk: Thunk,
   _delegator: Rendering.delegator
 };
 

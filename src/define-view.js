@@ -11,8 +11,9 @@ function getFunctionForwardIntoStream(stream) {
 
 // traverse the vtree, replacing the value of 'ev-*' fields with
 // `function (ev) { view[$PREVIOUS_VALUE].onNext(ev); }`
-function replaceStreamNameWithForwardFunction(vtree, view) {
-  if (typeof vtree.hooks !== 'undefined') {
+function replaceStreamNameWithForwardFunction(node, view) {
+  if (node && node.type === 'VirtualNode' && typeof node.hooks !== 'undefined') {
+    var vtree = node;
     for (var key in vtree.hooks) {
       if (vtree.hooks.hasOwnProperty(key)) {
         var streamName = vtree.hooks[key].value;
@@ -24,9 +25,18 @@ function replaceStreamNameWithForwardFunction(vtree, view) {
       }
     }
   }
-  if (Array.isArray(vtree.children)) {
-    for (var i = 0; i < vtree.children.length; i++) {
-      replaceStreamNameWithForwardFunction(vtree.children[i], view);
+  if (node && node.type === 'Thunk') {
+    var thunk = node;
+    var originalFn = thunk.fn;
+    thunk.fn = function () {
+      var vtree = originalFn.apply(null, arguments);
+      replaceStreamNameWithForwardFunction(vtree, view);
+      return vtree;
+    };
+  }
+  if (node && Array.isArray(node.children)) {
+    for (var i = 0; i < node.children.length; i++) {
+      replaceStreamNameWithForwardFunction(node.children[i], view);
     }
   }
 }

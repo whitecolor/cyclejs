@@ -19,7 +19,8 @@
     "rx": "2.3.14",
     "virtual-dom": "0.0.22",
     "virtual-hyperscript": "4.5.0",
-    "dom-delegator": "11.0.0"
+    "dom-delegator": "11.0.0",
+    "vdom-thunk": "^3.0.0"
   },
   "devDependencies": {
     "browserify": "6.2.0",
