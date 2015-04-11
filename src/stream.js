@@ -60,9 +60,20 @@ function makeInjectFn(stream) {
       console.warn('The call to inject() should provide the inputs that this ' +
       'Stream expects according to its definition function.');
     }
-    for (let i = 0; i < stream._definitionFn.length; i++) {
-      let subscription = replicateAll(arguments[i], stream._proxies[i]);
-      stream._subscription.add(subscription);
+    let injectArgs = arguments;
+    stream._injectOnSubscribe = function injectOnSubscribe() {
+      for (let i = 0; i < stream._definitionFn.length; i++) {
+        let subscription = replicateAll(injectArgs[i], stream._proxies[i]);
+        stream._subscription.add(subscription);
+      }
+    };
+    if (typeof stream.interaction$ !== 'undefined' ||
+      typeof stream.choose === 'function')
+    {
+      stream._wasSubscribed = true;
+    }
+    if (stream._wasSubscribed) {
+      stream._injectOnSubscribe();
     }
     stream._wasInjected = true;
     if (arguments.length === 1) {
@@ -83,6 +94,18 @@ function makeDisposeFn(stream) {
   };
 }
 
+function makeSubscribe(stream) {
+  let oldSubscribe = stream.subscribe;
+  return function subscribe() {
+    let disposable = oldSubscribe.apply(stream, arguments);
+    if (typeof stream._injectOnSubscribe === 'function') {
+      stream._injectOnSubscribe();
+    }
+    stream._wasSubscribed = true;
+    return disposable;
+  };
+}
+
 function createStream(definitionFn) {
   if (arguments.length !== 1 || typeof definitionFn !== 'function') {
     throw new Error('Stream expects the definitionFn as the only argument.');
@@ -97,9 +120,11 @@ function createStream(definitionFn) {
   stream._proxies = proxies;
   stream._definitionFn = definitionFn;
   stream._wasInjected = false;
+  stream._wasSubscribed = false;
   stream._subscription = new Rx.CompositeDisposable();
   stream.inject = makeInjectFn(stream);
   stream.dispose = makeDisposeFn(stream);
+  stream.subscribe = makeSubscribe(stream);
   return stream;
 }
 

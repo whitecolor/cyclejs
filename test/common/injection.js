@@ -98,13 +98,10 @@ describe('Injection', function () {
     six$.inject(five$).inject(four$).inject(three$).inject(two$).inject(one$);
   });
 
-  it('vtree$ needs replay/connect if we subscribe after injection', function (done) {
+  it('vtree$ can be subscribed after injection', function (done) {
     let m$ = Rx.Observable.just(2);
     let vtree$ = Cycle.createStream(function (m$) {
-      // shareReplay(1) not enough, replay(null,1) and connect() needed
-      let vtree$ = m$.map(x => h('div', String(x))).replay(null, 1);
-      vtree$.connect();
-      return vtree$;
+      return m$.map(x => h('div', String(x)));
     });
     let v$ = Cycle.createStream(function (m$) {
       return m$.map(x => x * 3);

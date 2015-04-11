@@ -1,5 +1,5 @@
 'use strict';
-/* global describe, it, beforeEach */
+/* global describe, it, afterEach */
 let assert = require('assert');
 let Cycle = require('../../src/cycle');
 //let DOMUser = require('../../src/dom-user');
@@ -13,15 +13,8 @@ function createRenderTarget() {
   return element;
 }
 
-//function createDOMUser() {
-//  let element = document.createElement('div');
-//  element.className = 'cycletest';
-//  document.body.appendChild(element);
-//  return Cycle.createDOMUser(element);
-//}
-
 describe('Custom Elements', function () {
-  beforeEach(function () {
+  afterEach(function () {
     Rendering.unregisterAllCustomElements();
     let testDivs = Array.prototype.slice.call(document.querySelectorAll('.cycletest'));
     testDivs.forEach(function (x) {

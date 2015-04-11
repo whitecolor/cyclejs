@@ -1,5 +1,5 @@
 'use strict';
-/* global describe, it, beforeEach */
+/* global describe, it, afterEach */
 let assert = require('assert');
 let Cycle = require('../../src/cycle');
 let Rendering = require('../../src/render');
@@ -14,7 +14,7 @@ function createRenderTarget() {
 }
 
 describe('Rendering', function () {
-  beforeEach(function () {
+  afterEach(function () {
     Rendering.unregisterAllCustomElements();
     let testDivs = Array.prototype.slice.call(document.querySelectorAll('.cycletest'));
     testDivs.forEach(function (x) {
@@ -181,6 +181,28 @@ describe('Rendering', function () {
         done();
       });
       rootElem$.inject(vtree$);
+    });
+
+    it('should not depend on injection order', function () {
+      let rootElem$ = Cycle.createStream(function (vtree$) {
+        return Cycle.render(vtree$, createRenderTarget());
+      });
+      let data$ = Cycle.createStream(() => Rx.Observable.just('just data'));
+      let vtree$ = Cycle.createStream((data$) => {
+        return data$.map(data => {
+          console.warn('vtree'); console.log(data); console.log('');
+          return h('h3.text-element', data);
+        });
+      });
+
+      vtree$.inject(data$);
+      rootElem$.inject(vtree$);
+
+      let textElement = document.querySelector('.text-element');
+      assert.notStrictEqual(textElement, null);
+      assert.strictEqual(textElement.tagName, 'H3');
+      assert.strictEqual(textElement.innerHTML, 'just data');
+      rootElem$.dispose();
     });
   });
 });
