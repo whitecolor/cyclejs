@@ -36,7 +36,6 @@
     "eslint-plugin-no-class": "0.1.0",
     "markdox": "0.1.10",
     "mocha": "2.3.3",
-    "rx": "4.0.6",
     "sinon": "1.17.2",
     "testem": "^0.9.11",
     "uglify-js": "2.5.0"
@@ -50,7 +49,7 @@
   "scripts": {
     "eslint": "eslint src/",
     "mocha": "mocha --compilers js:babel/register test",
-    "test": "npm run eslint && npm run mocha && npm run test-browser",
+    "test": "npm run eslint && npm run mocha",
     "test-browser": "testem",
     "pretest-browser": "browserify test/cycle.js -t babelify -o test/browser/tests-bundle.js",
     "posttest-browser": "rm test/browser/tests-bundle.js",
