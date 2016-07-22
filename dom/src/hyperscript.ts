@@ -1,6 +1,6 @@
 import {Stream} from 'xstream';
-import {VNode} from './interfaces';
-import * as is from 'snabbdom/is';
+import {VNode} from 'snabbdom';
+const is = require('snabbdom/is');
 const vnode = require('snabbdom/vnode');
 
 function isGenericStream(x: any): boolean {
@@ -47,7 +47,7 @@ export function h(sel: string, b?: any, c?: any): VNode {
     }
   }
   if (is.array(children)) {
-    children = children.filter(x => <boolean>x);
+    children = children.filter(x => <boolean>!!x);
     for (i = 0; i < children.length; ++i) {
       if (is.primitive(children[i])) {
         children[i] = vnode(undefined, undefined, undefined, children[i]);

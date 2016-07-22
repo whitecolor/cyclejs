@@ -1,4 +1,4 @@
-import {VNode} from './interfaces';
+import {VNode} from 'snabbdom';
 import {EventDelegator} from './EventDelegator';
 let MapPolyfill: typeof Map = require('es6-map');
 
@@ -55,8 +55,8 @@ export class IsolateModule {
       create(oldVNode: VNode, vNode: VNode) {
         const {data: oldData = {}} = oldVNode;
         const {elm, data = {}} = vNode;
-        const oldScope = oldData.isolate || ``;
-        const scope = data.isolate || ``;
+        const oldScope = oldData['isolate'] || ``;
+        const scope = data['isolate'] || ``;
         if (scope) {
           if (oldScope) { self.removeScope(oldScope); }
           self.setScope(<Element> elm, scope);
@@ -77,8 +77,8 @@ export class IsolateModule {
       update(oldVNode: VNode, vNode: VNode) {
         const {data: oldData = {}} = oldVNode;
         const {elm, data = {}} = vNode;
-        const oldScope = oldData.isolate || ``;
-        const scope = data.isolate || ``;
+        const oldScope = oldData['isolate'] || ``;
+        const scope = data['isolate'] || ``;
         if (scope && scope !== oldScope) {
           if (oldScope) { self.removeScope(oldScope); }
           self.setScope(<Element> elm, scope);

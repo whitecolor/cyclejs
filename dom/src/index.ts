@@ -1,6 +1,6 @@
 const thunk = require('snabbdom/thunk');
 export {thunk};
-export * from './interfaces';
+export * from 'snabbdom';
 export {DOMSource, EventsFnOptions} from './DOMSource';
 /**
  * A factory for the DOM driver function.

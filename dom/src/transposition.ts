@@ -1,7 +1,7 @@
 import {StreamAdapter} from '@cycle/base';
 import xsSA from '@cycle/xstream-adapter';
 import xs, {Stream} from 'xstream';
-import {VNode} from './interfaces';
+import {VNode} from 'snabbdom';
 
 function createVTree(vnode: VNode, children: Array<any>): any {
   return {
@@ -18,7 +18,7 @@ export function makeTransposeVNode(runStreamAdapter: StreamAdapter): (vnode: VNo
   return function transposeVNode(vnode: VNode): Stream<VNode> {
     if (!vnode) {
       return null;
-    } else if (vnode && typeof vnode.data === `object` && vnode.data.static) {
+    } else if (vnode && typeof vnode.data === `object` && vnode.data['static']) {
       return xs.of(vnode);
     } else if (runStreamAdapter.isValidStream(vnode)) {
       const xsStream: Stream<VNode> = xsSA.adapt(vnode, runStreamAdapter.streamSubscribe);

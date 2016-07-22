@@ -2,7 +2,7 @@ import {StreamAdapter} from '@cycle/base';
 import xsSA from '@cycle/xstream-adapter';
 import {Stream} from 'xstream';
 import {DOMSource} from './DOMSource';
-import {VNode} from './interfaces';
+import {VNode} from 'snabbdom';
 import xs from 'xstream';
 import {ElementFinder} from './ElementFinder';
 import {fromEvent} from './fromEvent';

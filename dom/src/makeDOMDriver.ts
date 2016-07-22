@@ -3,7 +3,7 @@ import {init} from 'snabbdom';
 import xs, {Stream} from 'xstream';
 import {DOMSource} from './DOMSource';
 import {MainDOMSource} from './MainDOMSource';
-import {VNode} from './interfaces';
+import {VNode} from 'snabbdom';
 import {VNodeWrapper} from './VNodeWrapper';
 import {getElement} from './utils';
 import defaultModules from './modules';
@@ -53,7 +53,7 @@ function makeDOMDriver(container: string | Element, options?: DOMDriverOptions):
     );
     const rootElement$ = preprocessedVNode$
       .map(vnode => vnodeWrapper.call(vnode))
-      .fold<VNode>(<(acc: VNode, v: VNode) => VNode>patch, <VNode> rootElement)
+      .fold<VNode>(<(acc: VNode, v: VNode) => VNode>patch, <VNode> <any> rootElement)
       .drop(1)
       .map(function unwrapElementFromVNode(vnode: VNode) { return vnode.elm; })
       .compose(stream => xs.merge(stream, xs.never())) // don't complete this stream

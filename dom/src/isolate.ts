@@ -1,4 +1,4 @@
-import {VNode} from './interfaces';
+import {VNode} from 'snabbdom';
 import {SCOPE_PREFIX} from './utils';
 import {DOMSource} from './DOMSource';
 
@@ -12,9 +12,9 @@ interface Mappable<T, R> {
 
 export function isolateSink(sink: any, scope: string): any {
   return <Mappable<VNode, VNode>>sink.map((vTree: VNode) => {
-    if (vTree.data.isolate) {
+    if (vTree.data['isolate']) {
       const existingScope =
-        parseInt(vTree.data.isolate.split(SCOPE_PREFIX + 'cycle')[1]);
+        parseInt(vTree.data['isolate'].split(SCOPE_PREFIX + 'cycle')[1]);
 
       const _scope = parseInt(scope.split('cycle')[1]);
 
@@ -22,7 +22,7 @@ export function isolateSink(sink: any, scope: string): any {
         return vTree;
       }
     }
-    vTree.data.isolate = SCOPE_PREFIX + scope;
+    vTree.data['isolate'] = SCOPE_PREFIX + scope;
     return vTree;
   });
 }

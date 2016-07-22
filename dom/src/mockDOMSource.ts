@@ -1,5 +1,5 @@
 import {StreamAdapter} from '@cycle/base';
-import {VNode} from './interfaces';
+import {VNode} from 'snabbdom';
 import xsSA from '@cycle/xstream-adapter';
 import {DOMSource, EventsFnOptions} from './DOMSource';
 import xs from 'xstream';
