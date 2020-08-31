@@ -1,4 +1,4 @@
-import xs, {Stream} from 'xstream';
+import xs, {Stream, MemoryStream} from 'xstream';
 import {adapt} from '@cycle/run/lib/adapt';
 export type Component<So, Si> = (sources: So, ...rest: Array<any>) => Si;
 
@@ -141,13 +141,19 @@ export type OuterSo<ISo> = {
 
 export type OuterSi<ISo, ISi> = {
   [K in keyof ISo & keyof ISi]: ISo[K] extends IsolateableSource
-    ? (ReturnType<ISo[K]['isolateSink']> extends ISi[K]
+    ? ReturnType<ISo[K]['isolateSink']> extends ISi[K]
+      ? ISi[K]
+      : ISi[K] extends MemoryStream<any>
+      ? ReturnType<ISo[K]['isolateSink']> extends Stream<any>
         ? ISi[K]
-        : ReturnType<ISo[K]['isolateSink']> extends Stream<infer T>
-        ? Stream<T>
-        : (ReturnType<ISo[K]['isolateSink']> extends Stream<any>
-            ? Stream<unknown>
-            : unknown))
+        : any
+      : // : ReturnType<ISo[K]['isolateSink']> extends MemoryStream<infer T>
+      // ? MemoryStream<T>
+      ReturnType<ISo[K]['isolateSink']> extends Stream<infer T>
+      ? Stream<T>
+      : ReturnType<ISo[K]['isolateSink']> extends Stream<any>
+      ? Stream<unknown>
+      : unknown
     : ISi[K];
 } &
   {[K in Exclude<keyof ISi, keyof ISo>]: ISi[K]};
